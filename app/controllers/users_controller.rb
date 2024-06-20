@@ -10,6 +10,10 @@ class UsersController < ApplicationController
   def create
     @user = User.new(user_params)
     if @user.save
+      # guard against the session-fixation attacks:
+      reset_session
+      # log in new users automatically as part of the signup process:
+      log_in @user
       flash[:success] = "Welcome to the Sample App!"
       redirect_to @user
     else
