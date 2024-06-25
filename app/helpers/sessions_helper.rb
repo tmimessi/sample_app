@@ -1,6 +1,8 @@
 module SessionsHelper
     def log_in(user)
         session[:user_id] = user.id
+        # guard agains session replay attacks
+        session[:session_token] = user.session_token
     end
 
     # remembers a user in a persistent session
@@ -13,8 +15,10 @@ module SessionsHelper
      # returns the user corresponding to the remember token cookie
     def current_user 
         if (user_id = session[:user_id])
-            # If @current_user is already set, the code does nothing. If @current_user is nil or false, it assigns to @current_user the result of User.find_by(id: user_id). This attempts to find a user in the database with the specified user_id. If a user with this ID exists, the user object is assigned to @current_user; if no such user exists, nil is assigned to @current_user.
-            @current_user ||= User.find_by(id: user_id)
+            user = User.find_by(id: user_id)
+            if user && session[:session_token] == user.session_token
+                @current_user = user
+            end
         elsif (user_id = cookies.encrypted[:user_id])
             user = User.find_by(id: user_id)
             if user && user.authenticated?(cookies[:remember_token])
@@ -22,6 +26,11 @@ module SessionsHelper
                 @current_user = user
             end
         end
+    end
+
+    # returns true if the given user is the current user
+    def current_user?(user)
+        user && user == current_user
     end
 
     # returns true if the user is logged in, false otherwise
@@ -41,5 +50,10 @@ module SessionsHelper
         forget(current_user)
         reset_session
         @current_user = nil
+    end
+
+    # storing the location of the requested page but only for a get request
+    def store_location
+        session[:forwarding_url] = request.original_url if request.get?
     end
 end
