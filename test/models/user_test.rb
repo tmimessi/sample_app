@@ -69,6 +69,6 @@ class UserTest < ActiveSupport::TestCase
 
     test "authenticated? should return false for a user with nil digest" do 
       # start with a user that has no remember digest (which is true for the @user variable defined in the setup method) and then call authenticated?. (the remember token is blank because it doesn’t matter what its value is, because the error occurs before it ever gets used.)
-      assert_not @user.authenticated?('')
+      assert_not @user.authenticated?(:remember, '')
     end
 end
