@@ -1,0 +1,13 @@
+<% provide(:title, "forgot password") %>
+<h1>Forgot password</h1>
+
+<div class="row">
+    <div class="col-md-6 col-md-offset-3">
+        <%# Because @password_reset doesn't correspond to an Active Record object, form_with won't automatically create a URL for it. By passing the :password_reset symbol and an explicit URL, we give Rails the information it needs to create the form %>
+        <%= form_with(url: password_resets_path, scope: :password_reset) do  |f| %>
+            <%= f.label :email %>
+            <%= f.email_field :email, class: "form-control" %>
+            <%= f.submit "Submit", class: "btn btn-primary" %>
+        <% end %>
+    </div>
+</div>
