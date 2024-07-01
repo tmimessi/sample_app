@@ -5,6 +5,7 @@ class UsersController < ApplicationController
 
   def show
     @user = User.find(params[:id])
+    @microposts = @user.microposts.paginate(page: params[:page])
   end
 
   def new
@@ -50,16 +51,6 @@ class UsersController < ApplicationController
     end
 
     # before filters
-
-    # confirms a logged-in user
-    def logged_in_user
-      unless logged_in?
-        store_location
-        flash[:danger] = "Please, log in"
-        # see_other is a status code when redirecting after a delete request
-        redirect_to login_url, status: :see_other
-      end
-    end
 
     # confirms the correct user
     def correct_user

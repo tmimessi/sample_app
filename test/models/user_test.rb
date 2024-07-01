@@ -71,4 +71,13 @@ class UserTest < ActiveSupport::TestCase
       # start with a user that has no remember digest (which is true for the @user variable defined in the setup method) and then call authenticated?. (the remember token is blank because it doesn’t matter what its value is, because the error occurs before it ever gets used.)
       assert_not @user.authenticated?(:remember, '')
     end
+
+    test "associated microposts should be destroyed" do 
+      @user.save
+      @user.microposts.create!(content: "lorem ipsum")
+      # destroying the user reduces the micropost count by 1
+      assert_difference 'Micropost.count', -1 do
+        @user.destroy
+      end
+    end
 end
