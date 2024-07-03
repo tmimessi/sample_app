@@ -1,0 +1,7 @@
+<%# When a user follows another user, two things need to happen on the page: the “follow” button needs to change to “unfollow” and the follower count needs to show the new number of followers. (Because the Turbo template will be located in the relationships directory, we have to include the users directory in "users/unfollow" for the unfollow template to be found.) %>
+<%= turbo_stream.update "follow_form" do %>
+    <%= render partial: "users/unfollow" %>
+<% end %>
+<%= turbo_stream.update "followers" do %>
+    <%= @user.followers.count %>
+<% end %>
